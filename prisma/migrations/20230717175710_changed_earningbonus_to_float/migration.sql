@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "users" ALTER COLUMN "earningBonus" SET DEFAULT 0,
+ALTER COLUMN "earningBonus" SET DATA TYPE DOUBLE PRECISION;

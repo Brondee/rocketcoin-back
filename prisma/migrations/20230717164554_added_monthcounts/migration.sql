@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "users" ADD COLUMN     "expMonthCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "faucetMonthCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "linksMonthCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "offerwallMonthCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "ptcMonthCount" INTEGER NOT NULL DEFAULT 0;
