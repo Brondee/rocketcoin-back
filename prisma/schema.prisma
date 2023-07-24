@@ -69,4 +69,13 @@ model Rating {
   companyName String
   curRating Int
   ratings Int[]
+  userIds Int[]
+}
+
+model LinkInfo {
+  id Int @id @default(autoincrement())
+
+  userIp String
+  linkName String
+  linkClickCount Int
 }

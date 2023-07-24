@@ -20,26 +20,30 @@ export class RatingService {
           companyName: dto.companyName,
           curRating: dto.rating,
           ratings: [dto.rating],
+          userIds: [dto.userId],
         },
       });
       return newRating;
     } else {
-      const ratings = companyRating.ratings;
-      let curRating = 0;
-      for (let i = 0; i < ratings.length; i++) {
-        curRating += ratings[i];
+      if (companyRating.userIds.indexOf(dto.userId) === -1) {
+        const ratings = companyRating.ratings;
+        let curRating = 0;
+        for (let i = 0; i < ratings.length; i++) {
+          curRating += ratings[i];
+        }
+        curRating = Math.round(curRating / companyRating.ratings.length);
+        const newRating = await this.prisma.rating.update({
+          where: {
+            id: companyRating.id,
+          },
+          data: {
+            curRating: curRating,
+            ratings: { push: dto.rating },
+            userIds: { push: dto.userId },
+          },
+        });
+        return newRating;
       }
-      curRating = Math.round(curRating / companyRating.ratings.length);
-      const newRating = await this.prisma.rating.update({
-        where: {
-          id: companyRating.id,
-        },
-        data: {
-          curRating: curRating,
-          ratings: { push: dto.rating },
-        },
-      });
-      return newRating;
     }
   }
 }

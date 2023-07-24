@@ -2,17 +2,17 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class OfferocDto {
   @IsString()
-  @IsNotEmpty()
-  subId: string;
+  // @IsNotEmpty()
+  subId: number;
 
   @IsString()
-  @IsNotEmpty()
-  transId: string;
+  // @IsNotEmpty()
+  transId: number;
 
   @IsNotEmpty()
   reward: number;
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsString()
   signature: string;
 }
