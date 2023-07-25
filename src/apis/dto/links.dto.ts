@@ -12,4 +12,12 @@ export class LinksDto {
   @IsNotEmpty()
   @IsString()
   linkName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  ip: string;
+
+  @IsNotEmpty()
+  @IsString()
+  lastClicked: string;
 }

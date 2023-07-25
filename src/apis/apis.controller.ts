@@ -1,6 +1,5 @@
-import { Controller, Get, Query, Post, Body, Ip } from '@nestjs/common';
+import { Controller, Get, Query, Post, Body, Req } from '@nestjs/common';
 import { ApisService } from './apis.service';
-import { OfferocDto } from './dto';
 import { BitcotasksDto } from './dto/bitcotasks.dto';
 import { LinksDto } from './dto/links.dto';
 
@@ -74,6 +73,16 @@ export class ApisController {
     return this.apisService.parseBitcotasksRequest(dto);
   }
 
+  @Post('offerscrypto')
+  parseOffersCryptoRequest(
+    @Body() dto: any,
+    @Req() req: any,
+    @Query('reward') reward: any,
+  ) {
+    console.log(dto, req.body, req, reward);
+    return this.apisService.parseOffersCryptoRequest(dto);
+  }
+
   @Post('offeroc')
   parseOfferocRequest(@Body() dto: any) {
     return this.apisService.parseOfferocRequest(dto);
@@ -85,12 +94,12 @@ export class ApisController {
   }
 
   @Post('links')
-  parseLinksRequest(@Body() dto: LinksDto, @Ip() ip: string) {
-    return this.apisService.parseLinksRequest(dto, ip);
+  parseLinksRequest(@Body() dto: LinksDto) {
+    return this.apisService.parseLinksRequest(dto);
   }
 
   @Get('links_info')
-  getLinksInfo(@Ip() ip: string) {
+  getLinksInfo(@Query('ip') ip: string) {
     return this.apisService.getLinksInfo(ip);
   }
 }

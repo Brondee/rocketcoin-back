@@ -211,6 +211,43 @@ export class ApisService {
     }
   }
 
+  async parseOffersCryptoRequest(dto: BitcotasksDto) {
+    console.log('requested');
+    const { subId, transId, reward, signature } = dto;
+    const md5Code = md5(
+      String(subId) +
+        String(transId) +
+        String(reward) +
+        this.config.get('OFFERSCRYPTO_SECRET'),
+    );
+    console.log(md5Code, dto);
+    if (md5Code === signature) {
+      const user = await this.prisma.user.findUnique({
+        where: { id: Number(subId) },
+      });
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          tokensAll: {
+            increment: Number(reward) * (1 + user.earningBonus),
+          },
+          curTokens: {
+            increment: Number(reward) * (1 + user.earningBonus),
+          },
+        },
+        select: {
+          id: true,
+          tokensAll: true,
+          curTokens: true,
+        },
+      });
+      await this.referralSystem(user.id, Number(reward));
+      return 'ok';
+    } else {
+      return new ForbiddenException('md5 codes dont match');
+    }
+  }
+
   async parseOfferocRequest(dto: any) {
     // const user = await this.prisma.user.findUnique({
     //   where: { id: Number(dto.subId) },
@@ -247,7 +284,7 @@ export class ApisService {
     return 'ok';
   }
 
-  async parseLinksRequest(dto: LinksDto, ip: string) {
+  async parseLinksRequest(dto: LinksDto) {
     const user = await this.prisma.user.findUnique({
       where: { id: dto.userId },
     });
@@ -268,7 +305,7 @@ export class ApisService {
     const linkInfo = await this.prisma.linkInfo.findFirst({
       where: {
         linkName: dto.linkName,
-        userIp: ip,
+        userIp: dto.ip,
       },
     });
     if (linkInfo) {
@@ -278,6 +315,7 @@ export class ApisService {
         },
         data: {
           linkClickCount: { increment: 1 },
+          lastClicked: dto.lastClicked,
         },
       });
     } else {
@@ -285,17 +323,40 @@ export class ApisService {
         data: {
           linkClickCount: 1,
           linkName: dto.linkName,
-          userIp: ip,
+          userIp: dto.ip,
+          lastClicked: dto.lastClicked,
         },
       });
     }
 
-    console.log(dto.userId, dto.reward, dto.linkName, ip);
+    console.log(dto.userId, dto.reward, dto.linkName, dto.ip);
     return 200;
   }
 
-  getLinksInfo(ip: string) {
-    return this.prisma.linkInfo.findMany({
+  async getLinksInfo(ip: string) {
+    const linksInfo = await this.prisma.linkInfo.findMany({
+      where: {
+        userIp: ip,
+      },
+    });
+    for (let i = 0; i < linksInfo.length; i++) {
+      if (
+        new Date().getDate() > new Date(linksInfo[i].lastClicked).getDate() ||
+        new Date().getMonth() > new Date(linksInfo[i].lastClicked).getMonth() ||
+        new Date().getFullYear() >
+          new Date(linksInfo[i].lastClicked).getFullYear()
+      ) {
+        await this.prisma.linkInfo.update({
+          where: {
+            id: linksInfo[i].id,
+          },
+          data: {
+            linkClickCount: 0,
+          },
+        });
+      }
+    }
+    return await this.prisma.linkInfo.findMany({
       where: {
         userIp: ip,
       },

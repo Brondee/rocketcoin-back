@@ -15,6 +15,7 @@ const whiteList = [
   '35.165.166.40',
   '35.166.159.131',
   '52.40.3.140',
+  '104.37.173.238',
 ];
 const corsOptions = {
   origin: (origin, callback) => {

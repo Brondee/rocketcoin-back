@@ -78,4 +78,6 @@ model LinkInfo {
   userIp String
   linkName String
   linkClickCount Int
+
+  lastClicked String @default("")
 }
