@@ -31,6 +31,8 @@ model User {
   curTokens Int @default(0)
   bonusStreak Int @default(0)
   bonusLastTaken String @default("") 
+  faucetClaimed String @default("")
+  faucetClaimedCount Int @default(0)
 
   ptcCount Int @default(0)
   ptcMonthCount Int @default(0)

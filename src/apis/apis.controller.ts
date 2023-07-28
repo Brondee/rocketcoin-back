@@ -7,14 +7,6 @@ import { LinksDto } from './dto/links.dto';
 export class ApisController {
   constructor(private apisService: ApisService) {}
 
-  @Get('adgem')
-  parseAdGemRequest(
-    @Query('user_id') userId: number,
-    @Query('amount') amount: number,
-  ) {
-    return this.apisService.parseAdGemRequest(userId, amount);
-  }
-
   @Get('cpx')
   parseCpxRequest(
     @Query('user_id') userId: number,
@@ -59,15 +51,6 @@ export class ApisController {
     return this.apisService.parseOffersAllRequest(userId, transId, amount, ms);
   }
 
-  @Get('ayet')
-  parseAyetRequest(
-    @Query('external_identifier') userId: number,
-    @Query('transaction_id') transId: number,
-    @Query('amount') amount: number,
-  ) {
-    return this.apisService.parseAyetRequest(userId, transId, amount);
-  }
-
   @Post('bitcotasks')
   parseBitcotasksRequest(@Body() dto: BitcotasksDto) {
     return this.apisService.parseBitcotasksRequest(dto);
@@ -81,6 +64,14 @@ export class ApisController {
   ) {
     console.log(dto, req.body, req, reward);
     return this.apisService.parseOffersCryptoRequest(dto);
+  }
+
+  @Get('offerscrypto_get')
+  parseOfferscryptoGet(
+    @Query('user_id') userId: number,
+    @Query('reward') reward: number,
+  ) {
+    return this.apisService.parseOfferscryptoGet(userId, reward);
   }
 
   @Post('offeroc')

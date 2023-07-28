@@ -10,27 +10,6 @@ import { LinksDto } from './dto/links.dto';
 export class ApisService {
   constructor(private prisma: PrismaService, private config: ConfigService) {}
 
-  async parseAdGemRequest(userId: number, amount: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        tokensAll: { increment: Number(amount) * (1 + user.earningBonus) },
-        curTokens: { increment: Number(amount) * (1 + user.earningBonus) },
-      },
-      select: {
-        id: true,
-        tokensAll: true,
-        curTokens: true,
-      },
-    });
-    await this.referralSystem(user.id, Number(amount));
-    console.log({ userId, amount });
-    return 200;
-  }
-
   async parseCpxRequest(
     userId: number,
     status: number,
@@ -149,9 +128,9 @@ export class ApisService {
     }
   }
 
-  async parseAyetRequest(userId: number, transId: number, amount: number) {
+  async parseOfferscryptoGet(userId: number, reward: number) {
     console.log('requested');
-    console.log(userId, transId, amount);
+    console.log(userId, reward);
     const user = await this.prisma.user.findUnique({
       where: { id: Number(userId) },
     });
@@ -159,10 +138,10 @@ export class ApisService {
       where: { id: user.id },
       data: {
         tokensAll: {
-          increment: Number(amount) * (1 + user.earningBonus),
+          increment: Number(reward) * (1 + user.earningBonus),
         },
         curTokens: {
-          increment: Number(amount) * (1 + user.earningBonus),
+          increment: Number(reward) * (1 + user.earningBonus),
         },
       },
       select: {
@@ -171,7 +150,7 @@ export class ApisService {
         curTokens: true,
       },
     });
-    await this.referralSystem(user.id, Number(amount));
+    await this.referralSystem(user.id, Number(reward));
     return 200;
   }
 

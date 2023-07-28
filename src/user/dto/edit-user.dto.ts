@@ -36,4 +36,12 @@ export class EditUserDto {
   @IsOptional()
   @IsString()
   bonusLastTaken: string;
+
+  @IsOptional()
+  @IsString()
+  faucetClaimed: string;
+
+  @IsOptional()
+  @IsInt()
+  faucetClaimedCount: number;
 }
