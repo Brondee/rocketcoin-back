@@ -56,32 +56,12 @@ export class ApisController {
     return this.apisService.parseBitcotasksRequest(dto);
   }
 
-  @Post('offerscrypto')
-  parseOffersCryptoRequest(
-    @Body() dto: any,
-    @Req() req: any,
-    @Query('reward') reward: any,
-  ) {
-    console.log(dto, req.body, req, reward);
-    return this.apisService.parseOffersCryptoRequest(dto);
-  }
-
   @Get('offerscrypto_get')
   parseOfferscryptoGet(
     @Query('user_id') userId: number,
     @Query('reward') reward: number,
   ) {
     return this.apisService.parseOfferscryptoGet(userId, reward);
-  }
-
-  @Post('offeroc')
-  parseOfferocRequest(@Body() dto: any) {
-    return this.apisService.parseOfferocRequest(dto);
-  }
-
-  @Get('getofferoc')
-  parseOfferocGetRequest() {
-    return this.apisService.parseOfferocGetRequest();
   }
 
   @Post('links')

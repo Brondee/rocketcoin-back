@@ -36,10 +36,19 @@ model User {
 
   ptcCount Int @default(0)
   ptcMonthCount Int @default(0)
+  ptcDayCount Int @default(0)
+  ptcChallengesClaimed Int @default(0)
+
   linksCount Int @default(0)
   linksMonthCount Int @default(0)
+  linksDayCount Int @default(0)
+  linksChallengesClaimed Int @default(0)
+
   faucetCount Int @default(0)
   faucetMonthCount Int @default(0)
+  faucetDayCount Int @default(0)
+  faucetChallengesClaimed Int @default(0)
+
   offerwallCount Int @default(0)
   offerwallMonthCount Int @default(0)
 
@@ -47,6 +56,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  referralsChallengesClaimed Int @default(0)
   referrals ReferralInfo[]
   
   @@map("users")

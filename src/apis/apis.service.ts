@@ -33,6 +33,8 @@ export class ApisService {
             curTokens: {
               increment: Number(amountLocal) * (1 + user.earningBonus),
             },
+            offerwallCount: { increment: 1 },
+            offerwallMonthCount: { increment: 1 },
           },
           select: {
             id: true,
@@ -77,6 +79,8 @@ export class ApisService {
           curTokens: {
             increment: Number(reward) * (1 + user.earningBonus),
           },
+          offerwallCount: { increment: 1 },
+          offerwallMonthCount: { increment: 1 },
         },
         select: {
           id: true,
@@ -114,6 +118,8 @@ export class ApisService {
           curTokens: {
             increment: Number(amount) * (1 + user.earningBonus),
           },
+          offerwallCount: { increment: 1 },
+          offerwallMonthCount: { increment: 1 },
         },
         select: {
           id: true,
@@ -143,6 +149,8 @@ export class ApisService {
         curTokens: {
           increment: Number(reward) * (1 + user.earningBonus),
         },
+        offerwallCount: { increment: 1 },
+        offerwallMonthCount: { increment: 1 },
       },
       select: {
         id: true,
@@ -176,6 +184,8 @@ export class ApisService {
           curTokens: {
             increment: Number(reward) * (1 + user.earningBonus),
           },
+          offerwallCount: { increment: 1 },
+          offerwallMonthCount: { increment: 1 },
         },
         select: {
           id: true,
@@ -188,79 +198,6 @@ export class ApisService {
     } else {
       return new ForbiddenException('md5 codes dont match');
     }
-  }
-
-  async parseOffersCryptoRequest(dto: BitcotasksDto) {
-    console.log('requested');
-    const { subId, transId, reward, signature } = dto;
-    const md5Code = md5(
-      String(subId) +
-        String(transId) +
-        String(reward) +
-        this.config.get('OFFERSCRYPTO_SECRET'),
-    );
-    console.log(md5Code, dto);
-    if (md5Code === signature) {
-      const user = await this.prisma.user.findUnique({
-        where: { id: Number(subId) },
-      });
-      await this.prisma.user.update({
-        where: { id: user.id },
-        data: {
-          tokensAll: {
-            increment: Number(reward) * (1 + user.earningBonus),
-          },
-          curTokens: {
-            increment: Number(reward) * (1 + user.earningBonus),
-          },
-        },
-        select: {
-          id: true,
-          tokensAll: true,
-          curTokens: true,
-        },
-      });
-      await this.referralSystem(user.id, Number(reward));
-      return 'ok';
-    } else {
-      return new ForbiddenException('md5 codes dont match');
-    }
-  }
-
-  async parseOfferocRequest(dto: any) {
-    // const user = await this.prisma.user.findUnique({
-    //   where: { id: Number(dto.subId) },
-    // });
-    // await this.prisma.user.update({
-    //   where: { id: user.id },
-    //   data: {
-    //     tokensAll: { increment: Number(dto.reward) * (1 + user.earningBonus) },
-    //     curTokens: { increment: Number(dto.reward) * (1 + user.earningBonus) },
-    //   },
-    // });
-    // const md5Signature = md5(
-    //   dto.subId +
-    //     dto.transId +
-    //     String(dto.reward) +
-    //     this.config.get('OFFEROC_SECRET'),
-    // );
-
-    // console.log(user, dto, md5Signature);
-    // if (md5Signature !== dto.signature) {
-    //   return new ForbiddenException('signatures doesnt match');
-    // }
-    // if (user) {
-    //   return 'ok';
-    // } else {
-    //   return { error: 'error' };
-    // }
-    console.log(dto);
-    return 'ok';
-  }
-
-  parseOfferocGetRequest() {
-    console.log('requested');
-    return 'ok';
   }
 
   async parseLinksRequest(dto: LinksDto) {
@@ -272,6 +209,9 @@ export class ApisService {
       data: {
         tokensAll: { increment: Number(dto.reward) * (1 + user.earningBonus) },
         curTokens: { increment: Number(dto.reward) * (1 + user.earningBonus) },
+        linksCount: { increment: 1 },
+        linksMonthCount: { increment: 1 },
+        linksDayCount: { increment: 1 },
       },
       select: {
         id: true,
