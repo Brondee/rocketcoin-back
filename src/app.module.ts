@@ -9,6 +9,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { LeadersModule } from './leaders/leaders.module';
 import { ApisModule } from './apis/apis.module';
 import { RatingModule } from './rating/rating.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { RatingModule } from './rating/rating.module';
     LeadersModule,
     ApisModule,
     RatingModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],

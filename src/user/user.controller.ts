@@ -19,6 +19,11 @@ export class UserController {
     return this.userService.editUser(userId, dto);
   }
 
+  @Patch('tokens')
+  addTokens(@Body() dto: { userId: number; tokens: number }) {
+    return this.userService.addTokens(dto);
+  }
+
   @Patch('levelup')
   editLevel(@GetUser('id') userId: number, @Body() dto: { exp: number }) {
     return this.userService.editLevel(userId, dto);

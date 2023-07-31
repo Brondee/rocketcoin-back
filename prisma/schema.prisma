@@ -93,3 +93,38 @@ model LinkInfo {
 
   lastClicked String @default("")
 }
+
+model Task {
+  id Int @id @default(autoincrement())
+
+  title String 
+  description String
+  timeMinutes Int 
+  tokensReward Int
+  claimsAvailable Int
+  instruction String
+
+  taskApproves TaskApprove[]
+}
+
+model TaskApprove {
+  id Int @id @default(autoincrement())
+  userId Int
+  isApproved Boolean @default(false)
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId Int
+
+  files TaskApproveImg[]
+}
+
+model TaskApproveImg {
+  id Int @id @default(autoincrement())
+
+  fileUrl String
+
+  task TaskApprove @relation(fields: [taskApproveId], references: [id], onDelete: Cascade)
+  taskApproveId Int
+}
+
+

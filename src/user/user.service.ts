@@ -7,6 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as argon from 'argon2';
 import { EditUserDto } from './dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import * as schedule from 'node-schedule';
 
 @Injectable()
 export class UserService {
@@ -83,6 +84,39 @@ export class UserService {
       }
       throw error;
     }
+  }
+  async addTokens(dto: { userId: number; tokens: number }) {
+    const userBd = await this.prisma.user.findUnique({
+      where: { id: dto.userId },
+    });
+    const referralInfo = await this.prisma.referralInfo.findFirst({
+      where: { referralUserId: dto.userId },
+    });
+    if (referralInfo) {
+      await this.prisma.user.update({
+        where: {
+          id: referralInfo.userId,
+        },
+        data: {
+          tokensAll: {
+            increment: dto.tokens * 0.01,
+          },
+          curTokens: {
+            increment: dto.tokens * 0.01,
+          },
+        },
+      });
+      console.log('referral amount added');
+    }
+    return this.prisma.user.update({
+      where: {
+        id: dto.userId,
+      },
+      data: {
+        tokensAll: { increment: dto.tokens * (1 + userBd.earningBonus) },
+        curTokens: { increment: dto.tokens * (1 + userBd.earningBonus) },
+      },
+    });
   }
   async editLevel(userId: number, dto: { exp: number }) {
     const user = await this.prisma.user.findUnique({
@@ -163,4 +197,19 @@ export class UserService {
     delete newUser.password;
     return newUser;
   }
+
+  job = schedule.scheduleJob('0 * * *', async () => {
+    await this.prisma.user.updateMany({
+      data: {
+        faucetDayCount: 0,
+        linksDayCount: 0,
+        ptcDayCount: 0,
+        ptcChallengesClaimed: 0,
+        linksChallengesClaimed: 0,
+        faucetChallengesClaimed: 0,
+      },
+    });
+
+    console.log('leaders reward setted and table reseted');
+  });
 }
