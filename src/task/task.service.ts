@@ -36,14 +36,16 @@ export class TaskService {
     return this.prisma.task.findUnique({ where: { id: Number(id) } });
   }
 
-  getTaskApproveById(id: number) {
-    return this.prisma.taskApprove.findUnique({
+  async getTaskApproveById(id: number) {
+    const task = await this.prisma.taskApprove.findUnique({
       where: { id: Number(id) },
       include: {
         task: true,
         files: true,
       },
     });
+    console.log(task);
+    return task;
   }
 
   editApproveTask(dto: EditApproveDto) {

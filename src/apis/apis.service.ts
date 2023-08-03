@@ -33,8 +33,15 @@ export class ApisService {
             curTokens: {
               increment: Number(amountLocal) * (1 + user.earningBonus),
             },
-            offerwallCount: { increment: 1 },
-            offerwallMonthCount: { increment: 1 },
+            offerwallCount: {
+              increment: Number(amountLocal) * (1 + user.earningBonus),
+            },
+            offerwallDayCount: {
+              increment: Number(amountLocal) * (1 + user.earningBonus),
+            },
+            offerwallMonthCount: {
+              increment: Number(amountLocal) * (1 + user.earningBonus),
+            },
           },
           select: {
             id: true,
@@ -79,8 +86,15 @@ export class ApisService {
           curTokens: {
             increment: Number(reward) * (1 + user.earningBonus),
           },
-          offerwallCount: { increment: 1 },
-          offerwallMonthCount: { increment: 1 },
+          offerwallCount: {
+            increment: Number(reward) * (1 + user.earningBonus),
+          },
+          offerwallDayCount: {
+            increment: Number(reward) * (1 + user.earningBonus),
+          },
+          offerwallMonthCount: {
+            increment: Number(reward) * (1 + user.earningBonus),
+          },
         },
         select: {
           id: true,
@@ -118,8 +132,15 @@ export class ApisService {
           curTokens: {
             increment: Number(amount) * (1 + user.earningBonus),
           },
-          offerwallCount: { increment: 1 },
-          offerwallMonthCount: { increment: 1 },
+          offerwallCount: {
+            increment: Number(amount) * (1 + user.earningBonus),
+          },
+          offerwallDayCount: {
+            increment: Number(amount) * (1 + user.earningBonus),
+          },
+          offerwallMonthCount: {
+            increment: Number(amount) * (1 + user.earningBonus),
+          },
         },
         select: {
           id: true,
@@ -149,8 +170,15 @@ export class ApisService {
         curTokens: {
           increment: Number(reward) * (1 + user.earningBonus),
         },
-        offerwallCount: { increment: 1 },
-        offerwallMonthCount: { increment: 1 },
+        offerwallCount: {
+          increment: Number(reward) * (1 + user.earningBonus),
+        },
+        offerwallDayCount: {
+          increment: Number(reward) * (1 + user.earningBonus),
+        },
+        offerwallMonthCount: {
+          increment: Number(reward) * (1 + user.earningBonus),
+        },
       },
       select: {
         id: true,
@@ -184,8 +212,15 @@ export class ApisService {
           curTokens: {
             increment: Number(reward) * (1 + user.earningBonus),
           },
-          offerwallCount: { increment: 1 },
-          offerwallMonthCount: { increment: 1 },
+          offerwallCount: {
+            increment: Number(reward) * (1 + user.earningBonus),
+          },
+          offerwallDayCount: {
+            increment: Number(reward) * (1 + user.earningBonus),
+          },
+          offerwallMonthCount: {
+            increment: Number(reward) * (1 + user.earningBonus),
+          },
         },
         select: {
           id: true,

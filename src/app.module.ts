@@ -10,6 +10,7 @@ import { LeadersModule } from './leaders/leaders.module';
 import { ApisModule } from './apis/apis.module';
 import { RatingModule } from './rating/rating.module';
 import { TaskModule } from './task/task.module';
+import { PtcModule } from './ptc/ptc.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TaskModule } from './task/task.module';
     ApisModule,
     RatingModule,
     TaskModule,
+    PtcModule,
   ],
   controllers: [AppController],
   providers: [AppService],

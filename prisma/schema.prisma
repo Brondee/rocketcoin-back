@@ -50,14 +50,17 @@ model User {
   faucetChallengesClaimed Int @default(0)
 
   offerwallCount Int @default(0)
+  offerwallDayCount Int @default(0)
   offerwallMonthCount Int @default(0)
+  offerwallChallengesClaimed Int @default(0)
 
   rtHash String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  referralsChallengesClaimed Int @default(0)
   referrals ReferralInfo[]
+
+  ptcClaims PtcClaimed[]
   
   @@map("users")
 }
@@ -127,4 +130,37 @@ model TaskApproveImg {
   taskApproveId Int
 }
 
+model Ptc {
+  id Int @id @default(autoincrement())
 
+  title String
+  link String
+  description String @default("")
+  tokensReward Int
+  expReward Int
+  secondsWait Int
+  ptcType String
+  viewsCount Int @default(0)
+  viewsTotal Int
+  interval Int
+
+  ptcClaims PtcClaimed[]
+}
+
+model PtcClaimed {
+  id Int @id @default(autoincrement())
+
+  lastTaken String
+
+  ptc Ptc @relation(fields: [ptcId], references: [id], onDelete: Cascade)
+  ptcId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+}
+
+
+model LeadersGeneral {
+  id Int @id @default(autoincrement())
+
+  tablesResetMonth Int
+}

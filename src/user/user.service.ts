@@ -85,12 +85,12 @@ export class UserService {
       throw error;
     }
   }
-  async addTokens(dto: { userId: number; tokens: number }) {
+  async addTokens(userId: number, dto: { tokens: number }) {
     const userBd = await this.prisma.user.findUnique({
-      where: { id: dto.userId },
+      where: { id: userId },
     });
     const referralInfo = await this.prisma.referralInfo.findFirst({
-      where: { referralUserId: dto.userId },
+      where: { referralUserId: userId },
     });
     if (referralInfo) {
       await this.prisma.user.update({
@@ -110,7 +110,7 @@ export class UserService {
     }
     return this.prisma.user.update({
       where: {
-        id: dto.userId,
+        id: userId,
       },
       data: {
         tokensAll: { increment: dto.tokens * (1 + userBd.earningBonus) },
@@ -198,15 +198,55 @@ export class UserService {
     return newUser;
   }
 
+  incrementTasksCount(userId: number, dto: { type: string }) {
+    const { type } = dto;
+    if (type === 'faucet') {
+      return this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          faucetCount: { increment: 1 },
+          faucetMonthCount: { increment: 1 },
+          faucetDayCount: { increment: 1 },
+        },
+      });
+    } else if (type === 'links') {
+      return this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          linksCount: { increment: 1 },
+          linksMonthCount: { increment: 1 },
+          linksDayCount: { increment: 1 },
+        },
+      });
+    } else if (type === 'ptc') {
+      return this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          ptcCount: { increment: 1 },
+          ptcMonthCount: { increment: 1 },
+          ptcDayCount: { increment: 1 },
+        },
+      });
+    }
+  }
+
   job = schedule.scheduleJob('0 * * *', async () => {
     await this.prisma.user.updateMany({
       data: {
         faucetDayCount: 0,
         linksDayCount: 0,
         ptcDayCount: 0,
+        offerwallDayCount: 0,
         ptcChallengesClaimed: 0,
         linksChallengesClaimed: 0,
         faucetChallengesClaimed: 0,
+        offerwallChallengesClaimed: 0,
       },
     });
 

@@ -20,12 +20,20 @@ export class UserController {
   }
 
   @Patch('tokens')
-  addTokens(@Body() dto: { userId: number; tokens: number }) {
-    return this.userService.addTokens(dto);
+  addTokens(@GetUser('id') userId: number, @Body() dto: { tokens: number }) {
+    return this.userService.addTokens(userId, dto);
   }
 
   @Patch('levelup')
   editLevel(@GetUser('id') userId: number, @Body() dto: { exp: number }) {
     return this.userService.editLevel(userId, dto);
+  }
+
+  @Patch('increment')
+  incrementTasksCount(
+    @GetUser('id') userId: number,
+    @Body() dto: { type: string },
+  ) {
+    return this.userService.incrementTasksCount(userId, dto);
   }
 }
