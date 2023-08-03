@@ -24,9 +24,10 @@ import { EditApproveDto } from './dto/edit-approve.dto';
 export class TaskController {
   constructor(private taskService: TaskService) {}
 
+  @UseGuards(JwtGuard)
   @Get('all')
-  getAllTasks() {
-    return this.taskService.getAllTasks();
+  getAllTasks(@GetUser('id') userId: number) {
+    return this.taskService.getAllTasks(userId);
   }
 
   @Get('all_approve')
@@ -34,9 +35,10 @@ export class TaskController {
     return this.taskService.getAllApproveTasks();
   }
 
+  @UseGuards(JwtGuard)
   @Get('single/:id')
-  getTaskById(@Param('id') id: number) {
-    return this.taskService.getTaskById(id);
+  getTaskById(@Param('id') id: number, @GetUser('id') userId: number) {
+    return this.taskService.getTaskById(id, userId);
   }
 
   @Get('single_approve/:id')

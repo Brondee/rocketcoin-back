@@ -164,3 +164,37 @@ model LeadersGeneral {
 
   tablesResetMonth Int
 }
+
+model File {
+  id Int @id @default(autoincrement())
+
+  title String 
+  description String
+  tokensReward Int
+  expReward Int
+  timeToComplete Int
+  interval Int
+  link String
+
+  approves FileApprove[]
+}
+
+model FileApprove {
+  id Int @id @default(autoincrement())
+  userId Int
+  isApproved Boolean @default(false)
+
+  file File @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId Int
+
+  files FileApproveImg[]
+}
+
+model FileApproveImg {
+  id Int @id @default(autoincrement())
+
+  fileUrl String
+
+  file FileApprove @relation(fields: [fileApproveId], references: [id], onDelete: Cascade)
+  fileApproveId Int
+}

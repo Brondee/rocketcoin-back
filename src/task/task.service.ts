@@ -7,13 +7,13 @@ import { EditApproveDto } from './dto/edit-approve.dto';
 export class TaskService {
   constructor(private prisma: PrismaService) {}
 
-  getAllTasks() {
+  getAllTasks(userId: number) {
     return this.prisma.task.findMany({
       orderBy: {
         id: 'desc',
       },
       include: {
-        _count: { select: { taskApproves: true } },
+        taskApproves: { where: { userId } },
       },
     });
   }
@@ -32,8 +32,11 @@ export class TaskService {
     });
   }
 
-  getTaskById(id: number) {
-    return this.prisma.task.findUnique({ where: { id: Number(id) } });
+  getTaskById(id: number, userId: number) {
+    return this.prisma.task.findUnique({
+      where: { id: Number(id) },
+      include: { taskApproves: { where: { userId } } },
+    });
   }
 
   async getTaskApproveById(id: number) {
@@ -44,7 +47,6 @@ export class TaskService {
         files: true,
       },
     });
-    console.log(task);
     return task;
   }
 
@@ -64,6 +66,7 @@ export class TaskService {
   }
 
   addNewApproveTask(taskId: number, userId: number) {
+    console.log(userId);
     return this.prisma.taskApprove.create({
       data: { userId, taskId: Number(taskId) },
     });
