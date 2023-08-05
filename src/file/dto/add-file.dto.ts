@@ -21,10 +21,6 @@ export class AddFileDto {
   @IsNotEmpty()
   expReward: number;
 
-  @IsInt()
-  @IsNotEmpty()
-  interval: number;
-
   @IsString()
   @IsNotEmpty()
   link: string;

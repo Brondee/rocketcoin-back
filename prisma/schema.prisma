@@ -106,6 +106,7 @@ model Task {
   tokensReward Int
   claimsAvailable Int
   instruction String
+  interval Int @default(0)
 
   taskApproves TaskApprove[]
 }
@@ -114,6 +115,7 @@ model TaskApprove {
   id Int @id @default(autoincrement())
   userId Int
   isApproved Boolean @default(false)
+  sent DateTime @default(now())
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId Int
@@ -173,7 +175,6 @@ model File {
   tokensReward Int
   expReward Int
   timeToComplete Int
-  interval Int
   link String
 
   approves FileApprove[]
@@ -197,4 +198,34 @@ model FileApproveImg {
 
   file FileApprove @relation(fields: [fileApproveId], references: [id], onDelete: Cascade)
   fileApproveId Int
+}
+
+model Article {
+  id Int @id @default(autoincrement())
+
+  title String
+  description String
+  text String
+  createdAt DateTime @default(now())
+
+  imgs ArticleImg[]
+  views UserArticleSeen[]
+}
+
+model ArticleImg {
+  id Int @id @default(autoincrement())
+
+  fileUrl String
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int
+}
+
+model UserArticleSeen {
+  id Int @id @default(autoincrement())
+
+  userId Int
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int
 }

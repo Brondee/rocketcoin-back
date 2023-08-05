@@ -12,6 +12,7 @@ import { RatingModule } from './rating/rating.module';
 import { TaskModule } from './task/task.module';
 import { PtcModule } from './ptc/ptc.module';
 import { FileModule } from './file/file.module';
+import { ArticleModule } from './article/article.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { FileModule } from './file/file.module';
     TaskModule,
     PtcModule,
     FileModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

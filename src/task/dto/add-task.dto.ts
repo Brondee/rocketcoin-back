@@ -24,4 +24,8 @@ export class AddTaskDto {
   @IsString()
   @IsNotEmpty()
   instruction: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  interval: number;
 }
