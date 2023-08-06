@@ -17,10 +17,6 @@ export class AddTaskDto {
   @IsNotEmpty()
   tokensReward: number;
 
-  @IsInt()
-  @IsNotEmpty()
-  claimsAvailable: number;
-
   @IsString()
   @IsNotEmpty()
   instruction: string;

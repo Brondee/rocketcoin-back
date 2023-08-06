@@ -104,7 +104,6 @@ model Task {
   description String
   timeMinutes Int 
   tokensReward Int
-  claimsAvailable Int
   instruction String
   interval Int @default(0)
 
