@@ -25,6 +25,15 @@ export class UserService {
   }
   async editUser(userId: number, dto: EditUserDto) {
     try {
+      if (dto.earningBonus) {
+        await this.prisma.user.update({
+          where: { id: userId },
+          data: {
+            earningBonus: { increment: dto.earningBonus },
+          },
+        });
+        delete dto.earningBonus;
+      }
       if (dto.promocode) {
         const targetUser = await this.prisma.user.findUnique({
           where: { referralCode: dto.promocode },
@@ -125,59 +134,42 @@ export class UserService {
     const { level, curLevelExp } = user;
     let newLevel = 0;
     let newExp = 0;
-    let newTokens = 0;
     if (level === 1 && curLevelExp >= 100) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 1000;
     } else if (level === 2 && curLevelExp >= 300) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 1200;
     } else if (level === 3 && curLevelExp >= 50) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 1400;
     } else if (level === 4 && curLevelExp >= 500) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 1500;
     } else if (level === 5 && curLevelExp >= 600) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 1700;
     } else if (level === 6 && curLevelExp >= 700) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 1800;
     } else if (level === 7 && curLevelExp >= 800) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 2000;
     } else if (level === 8 && curLevelExp >= 900) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 2200;
     } else if (level === 9 && curLevelExp >= 1000) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 2500;
     } else if (level === 10 && curLevelExp >= 1500) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 3000;
     } else if (level > 10 && curLevelExp >= 5000) {
       newLevel = level + 1;
       newExp = 0;
-      newTokens = 4000;
     } else {
       newLevel = level;
       newExp = curLevelExp + dto.exp;
-    }
-
-    let newEarningBonus = 0;
-    if (level !== newLevel) {
-      newEarningBonus = 0.001;
     }
 
     const newUser = await this.prisma.user.update({
@@ -189,9 +181,6 @@ export class UserService {
         exp: { increment: dto.exp },
         expMonthCount: { increment: dto.exp },
         curLevelExp: newExp,
-        earningBonus: { increment: newEarningBonus },
-        tokensAll: { increment: newTokens },
-        curTokens: { increment: newTokens },
       },
     });
     delete newUser.password;

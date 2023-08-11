@@ -1,4 +1,10 @@
-import { IsEmail, IsOptional, IsString, IsInt } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsInt,
+  IsNumber,
+} from 'class-validator';
 
 export class EditUserDto {
   @IsString()
@@ -104,4 +110,12 @@ export class EditUserDto {
   @IsOptional()
   @IsInt()
   faucetMonthCount: number;
+
+  @IsOptional()
+  @IsNumber()
+  earningBonus: number;
+
+  @IsOptional()
+  @IsInt()
+  levelBonusTaken: number;
 }

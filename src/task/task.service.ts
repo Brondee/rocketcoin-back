@@ -65,10 +65,10 @@ export class TaskService {
     return this.prisma.task.create({ data: { ...dto } });
   }
 
-  addNewApproveTask(taskId: number, userId: number) {
+  addNewApproveTask(taskId: number, userId: number, dto: { dopInfo: string }) {
     console.log(userId);
     return this.prisma.taskApprove.create({
-      data: { userId, taskId: Number(taskId) },
+      data: { userId, taskId: Number(taskId), dopInfo: dto.dopInfo },
     });
   }
 

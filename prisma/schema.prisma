@@ -26,6 +26,7 @@ model User {
 
   level Int @default(1)
   earningBonus Float @default(0)
+  levelBonusTaken Int @default(0)
 
   tokensAll Int @default(0)
   curTokens Int @default(0)
@@ -115,6 +116,7 @@ model TaskApprove {
   userId Int
   isApproved Boolean @default(false)
   sent DateTime @default(now())
+  dopInfo String?
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId Int

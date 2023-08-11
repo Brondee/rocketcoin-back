@@ -66,8 +66,9 @@ export class TaskController {
   addNewApproveTask(
     @Param('taskId') taskId: number,
     @GetUser('id') userId: number,
+    @Body() dto: { dopInfo: string },
   ) {
-    return this.taskService.addNewApproveTask(taskId, userId);
+    return this.taskService.addNewApproveTask(taskId, userId, dto);
   }
 
   @Post('upload/:taskApproveId')
