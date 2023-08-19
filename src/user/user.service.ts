@@ -102,20 +102,27 @@ export class UserService {
       where: { referralUserId: userId },
     });
     if (referralInfo) {
-      await this.prisma.user.update({
-        where: {
-          id: referralInfo.userId,
-        },
-        data: {
-          tokensAll: {
-            increment: dto.tokens * 0.01,
-          },
-          curTokens: {
-            increment: dto.tokens * 0.01,
-          },
-        },
+      const reqUser = await this.prisma.user.findUnique({
+        where: { id: referralInfo.userId },
       });
-      console.log('referral amount added');
+      if (reqUser.ptcDayCount >= 2) {
+        await this.prisma.user.update({
+          where: {
+            id: referralInfo.userId,
+          },
+          data: {
+            tokensAll: {
+              increment: dto.tokens * 0.01,
+            },
+            curTokens: {
+              increment: dto.tokens * 0.01,
+            },
+          },
+        });
+        console.log('referral amount added');
+      } else {
+        console.log(`referral: ptcdaycount is ${reqUser.ptcDayCount}`);
+      }
     }
     return this.prisma.user.update({
       where: {
