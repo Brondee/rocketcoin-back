@@ -49,7 +49,7 @@ export class ApisService {
             curTokens: true,
           },
         });
-        await this.referralSystem(user.id, Number(amountLocal));
+        await this.referralSystem(user.id, Number(amountLocal), 'offers');
       } else {
         return new ForbiddenException('signatures dont match');
       }
@@ -102,7 +102,7 @@ export class ApisService {
           curTokens: true,
         },
       });
-      await this.referralSystem(user.id, Number(reward));
+      await this.referralSystem(user.id, Number(reward), 'offers');
     } else {
       return new ForbiddenException('md5 codes dont match');
     }
@@ -148,7 +148,7 @@ export class ApisService {
           curTokens: true,
         },
       });
-      await this.referralSystem(user.id, Number(amount));
+      await this.referralSystem(user.id, Number(amount), 'offers');
       return 200;
     } else {
       return new ForbiddenException('md5 codes dont match');
@@ -186,7 +186,7 @@ export class ApisService {
         curTokens: true,
       },
     });
-    await this.referralSystem(user.id, Number(reward));
+    await this.referralSystem(user.id, Number(reward), 'offers');
     return 200;
   }
 
@@ -228,7 +228,7 @@ export class ApisService {
           curTokens: true,
         },
       });
-      await this.referralSystem(user.id, Number(reward));
+      await this.referralSystem(user.id, Number(reward), 'offers');
       return 'ok';
     } else {
       return new ForbiddenException('md5 codes dont match');
@@ -254,7 +254,7 @@ export class ApisService {
         curTokens: true,
       },
     });
-    await this.referralSystem(user.id, Number(dto.reward));
+    await this.referralSystem(user.id, Number(dto.reward), 'links');
 
     const linkInfo = await this.prisma.linkInfo.findFirst({
       where: {
@@ -317,25 +317,39 @@ export class ApisService {
     });
   }
 
-  async referralSystem(userId: number, amount: number) {
+  async referralSystem(userId: number, amount: number, type: string) {
     const referralInfo = await this.prisma.referralInfo.findFirst({
       where: { referralUserId: userId },
     });
     if (referralInfo) {
+      let percentage = 0.01;
+      if (type === 'links') {
+        percentage = 0.1;
+      } else if (type === 'offers') {
+        percentage = 0.05;
+      }
       const reqUser = await this.prisma.user.findUnique({
         where: { id: referralInfo.userId },
       });
       if (reqUser.ptcDayCount >= 2) {
+        await this.prisma.referralInfo.update({
+          where: { id: referralInfo.id },
+          data: {
+            earnedCoins: {
+              increment: amount * percentage,
+            },
+          },
+        });
         await this.prisma.user.update({
           where: {
             id: referralInfo.userId,
           },
           data: {
             tokensAll: {
-              increment: amount * 0.01,
+              increment: amount * percentage,
             },
             curTokens: {
-              increment: amount * 0.01,
+              increment: amount * percentage,
             },
           },
         });

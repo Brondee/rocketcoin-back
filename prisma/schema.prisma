@@ -30,6 +30,7 @@ model User {
 
   tokensAll Int @default(0)
   curTokens Int @default(0)
+  investedTokens Int @default(0)
   bonusStreak Int @default(0)
   bonusLastTaken String @default("") 
   faucetClaimed String @default("")

@@ -1,4 +1,8 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto, LoginDto } from './dto';
 import * as argon from 'argon2';
@@ -44,6 +48,29 @@ export class AuthService {
           referralCode,
         },
       });
+
+      if (dto.promocode) {
+        const targetUser = await this.prisma.user.findUnique({
+          where: { referralCode: dto.promocode },
+        });
+        if (!targetUser) throw new NotFoundException('promocode is not found');
+        const isPromoActivatedByUser = await this.prisma.referralInfo.findFirst(
+          {
+            where: {
+              referralUserId: user.id,
+            },
+          },
+        );
+        if (!isPromoActivatedByUser) {
+          await this.prisma.referralInfo.create({
+            data: {
+              referralUserId: user.id,
+              referralUserName: dto.name,
+              userId: targetUser.id,
+            },
+          });
+        }
+      }
 
       const tokens = await this.signToken(
         user.id,

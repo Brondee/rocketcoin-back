@@ -34,28 +34,6 @@ export class UserService {
         });
         delete dto.earningBonus;
       }
-      if (dto.promocode) {
-        const targetUser = await this.prisma.user.findUnique({
-          where: { referralCode: dto.promocode },
-        });
-        if (!targetUser) throw new NotFoundException('promocode is not found');
-        const isPromoActivatedByUser = await this.prisma.referralInfo.findFirst(
-          {
-            where: {
-              referralUserId: userId,
-            },
-          },
-        );
-        if (!isPromoActivatedByUser) {
-          await this.prisma.referralInfo.create({
-            data: {
-              referralUserId: userId,
-              referralUserName: dto.name,
-              userId: targetUser.id,
-            },
-          });
-        }
-      }
       if (dto.tokens) {
         await this.prisma.user.update({
           where: { id: userId },
@@ -94,7 +72,7 @@ export class UserService {
       throw error;
     }
   }
-  async addTokens(userId: number, dto: { tokens: number }) {
+  async addTokens(userId: number, dto: { tokens: number; type: string }) {
     const userBd = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -102,20 +80,43 @@ export class UserService {
       where: { referralUserId: userId },
     });
     if (referralInfo) {
+      let percentage = 0.01;
+      if (dto.type === 'faucet') {
+        percentage = 0.5;
+      } else if (dto.type === 'offers') {
+        percentage = 0.05;
+      } else if (
+        dto.type === 'links' ||
+        dto.type === 'ptc' ||
+        dto.type === 'files' ||
+        dto.type === 'tasks'
+      ) {
+        percentage = 0.1;
+      } else if (dto.type === 'level') {
+        percentage = 0;
+      }
       const reqUser = await this.prisma.user.findUnique({
         where: { id: referralInfo.userId },
       });
       if (reqUser.ptcDayCount >= 2) {
+        await this.prisma.referralInfo.update({
+          where: { id: referralInfo.id },
+          data: {
+            earnedCoins: {
+              increment: dto.tokens * percentage,
+            },
+          },
+        });
         await this.prisma.user.update({
           where: {
             id: referralInfo.userId,
           },
           data: {
             tokensAll: {
-              increment: dto.tokens * 0.01,
+              increment: dto.tokens * percentage,
             },
             curTokens: {
-              increment: dto.tokens * 0.01,
+              increment: dto.tokens * percentage,
             },
           },
         });
@@ -193,6 +194,16 @@ export class UserService {
     delete newUser.password;
     return newUser;
   }
+  async reduceTokens(userId: number, tokens: number) {
+    return await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        curTokens: { decrement: Number(tokens) },
+      },
+    });
+  }
 
   incrementTasksCount(userId: number, dto: { type: string }) {
     const { type } = dto;
@@ -229,6 +240,24 @@ export class UserService {
           ptcDayCount: { increment: 1 },
         },
       });
+    }
+  }
+
+  async addFaucetPay(userId: number, amountUsdt: string) {
+    const userFind = await this.prisma.user.findUnique({
+      where: {
+        id: Number(userId),
+      },
+    });
+    if (userFind) {
+      return this.prisma.user.update({
+        where: { id: userFind.id },
+        data: {
+          investedTokens: { increment: Math.round(Number(amountUsdt) * 33333) },
+        },
+      });
+    } else {
+      return new NotFoundException('user not found');
     }
   }
 
