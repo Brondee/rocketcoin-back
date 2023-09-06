@@ -20,4 +20,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   promocode: string;
+
+  @IsNotEmpty()
+  @IsString()
+  registrationIp: string;
 }

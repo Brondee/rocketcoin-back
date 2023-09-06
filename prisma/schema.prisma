@@ -19,6 +19,8 @@ model User {
   email    String @unique
   referralCode String @unique
   password String
+ 
+  registrationIp String @default("")
 
   exp Float @default(0)
   curLevelExp Float @default(0)

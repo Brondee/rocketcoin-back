@@ -23,74 +23,85 @@ export class AuthService {
   async signup(dto: CreateUserDto) {
     const hash = await argon.hash(dto.password);
 
-    try {
-      const user = await this.prisma.user.create({
-        data: {
-          email: dto.email,
-          login: dto.login,
-          name: dto.name,
-          password: hash,
-          referralCode: String(Math.floor(Math.random() * 130) + 1),
-        },
-      });
+    const ipFind = await this.prisma.user.findFirst({
+      where: {
+        registrationIp: dto.registrationIp,
+      },
+    });
 
-      const referralCode =
-        String(user.id) +
-        Math.random().toString(36).slice(2, 10) +
-        Math.random().toString(36).slice(2, 10) +
-        String(Math.floor(Math.random() * 130) + 1);
-
-      await this.prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          referralCode,
-        },
-      });
-
-      if (dto.promocode) {
-        const targetUser = await this.prisma.user.findUnique({
-          where: { referralCode: dto.promocode },
-        });
-        if (!targetUser) throw new NotFoundException('promocode is not found');
-        const isPromoActivatedByUser = await this.prisma.referralInfo.findFirst(
-          {
-            where: {
-              referralUserId: user.id,
-            },
+    if (ipFind) {
+      throw new ForbiddenException('ip error');
+    } else {
+      try {
+        const user = await this.prisma.user.create({
+          data: {
+            email: dto.email,
+            login: dto.login,
+            name: dto.name,
+            password: hash,
+            referralCode: String(Math.floor(Math.random() * 130) + 1),
+            registrationIp: dto.registrationIp,
           },
-        );
-        if (!isPromoActivatedByUser) {
-          await this.prisma.referralInfo.create({
-            data: {
-              referralUserId: user.id,
-              referralUserName: dto.name,
-              userId: targetUser.id,
-            },
-          });
-        }
-      }
+        });
 
-      const tokens = await this.signToken(
-        user.id,
-        user.email,
-        user.name,
-        user.login,
-      );
-      await this.updateRefreshTokenHash(user.id, tokens.refresh_token);
-      return tokens;
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          if (error.meta.target[0] === 'email') {
-            throw new ForbiddenException('Credentials taken in email');
-          } else if (error.meta.target[0] === 'login') {
-            throw new ForbiddenException('Credentials taken in login');
+        const referralCode =
+          String(user.id) +
+          Math.random().toString(36).slice(2, 10) +
+          Math.random().toString(36).slice(2, 10) +
+          String(Math.floor(Math.random() * 130) + 1);
+
+        await this.prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            referralCode,
+          },
+        });
+
+        if (dto.promocode) {
+          const targetUser = await this.prisma.user.findUnique({
+            where: { referralCode: dto.promocode },
+          });
+          if (!targetUser)
+            throw new NotFoundException('promocode is not found');
+          const isPromoActivatedByUser =
+            await this.prisma.referralInfo.findFirst({
+              where: {
+                referralUserId: user.id,
+              },
+            });
+          if (!isPromoActivatedByUser) {
+            await this.prisma.referralInfo.create({
+              data: {
+                referralUserId: user.id,
+                referralUserName: dto.name,
+                userId: targetUser.id,
+              },
+            });
           }
         }
+
+        const tokens = await this.signToken(
+          user.id,
+          user.email,
+          user.name,
+          user.login,
+        );
+        await this.updateRefreshTokenHash(user.id, tokens.refresh_token);
+        return tokens;
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          if (error.code === 'P2002') {
+            if (error.meta.target[0] === 'email') {
+              throw new ForbiddenException('Credentials taken in email');
+            } else if (error.meta.target[0] === 'login') {
+              throw new ForbiddenException('Credentials taken in login');
+            }
+          }
+        }
+        throw error;
       }
-      throw error;
     }
   }
 

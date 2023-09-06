@@ -200,7 +200,7 @@ export class UserService {
         id: userId,
       },
       data: {
-        curTokens: { decrement: Number(tokens) },
+        investedTokens: { decrement: Number(tokens) },
       },
     });
   }
