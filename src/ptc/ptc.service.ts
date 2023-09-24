@@ -32,6 +32,14 @@ export class PtcService {
     });
   }
 
+  deletePtcById(id: number) {
+    return this.prisma.ptc.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+  }
+
   async setsetPtcClaimed(
     userId: number,
     dto: { ptcId: number; lastTaken: string },

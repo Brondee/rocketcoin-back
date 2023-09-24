@@ -30,9 +30,9 @@ model User {
   earningBonus Float @default(0)
   levelBonusTaken Int @default(0)
 
-  tokensAll Int @default(0)
-  curTokens Int @default(0)
-  investedTokens Int @default(0)
+  tokensAll BigInt @default(0)
+  curTokens BigInt @default(0)
+  investedTokens BigInt @default(0)
   bonusStreak Int @default(0)
   bonusLastTaken String @default("") 
   faucetClaimed String @default("")

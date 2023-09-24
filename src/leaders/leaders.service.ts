@@ -47,7 +47,7 @@ export class LeadersService {
     };
   }
 
-  job = schedule.scheduleJob('1 * *', async () => {
+  job = schedule.scheduleJob('* * * * * 1', async () => {
     const leadersGeneral = await this.prisma.leadersGeneral.findFirst();
     if (!leadersGeneral) {
       await this.prisma.leadersGeneral.create({

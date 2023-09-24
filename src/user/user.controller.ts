@@ -49,8 +49,11 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @Patch('reduce')
-  reduceTokens(@GetUser('id') userId: number, @Body() dto: { tokens: number }) {
-    return this.userService.reduceTokens(userId, dto.tokens);
+  reduceTokens(
+    @GetUser('id') userId: number,
+    @Body() dto: { tokens: number; type: string },
+  ) {
+    return this.userService.reduceTokens(userId, dto.tokens, dto.type);
   }
 
   @UseGuards(JwtGuard)

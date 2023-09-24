@@ -54,6 +54,7 @@ export class ApisService {
         return new ForbiddenException('signatures dont match');
       }
     }
+    await this.editLevel(userId, Number(amountLocal) * 0.05);
     console.log({ userId, amountLocal, status, transId });
     return user;
   }
@@ -103,6 +104,7 @@ export class ApisService {
         },
       });
       await this.referralSystem(user.id, Number(reward), 'offers');
+      await this.editLevel(userId, Number(reward) * 0.05);
     } else {
       return new ForbiddenException('md5 codes dont match');
     }
@@ -149,6 +151,7 @@ export class ApisService {
         },
       });
       await this.referralSystem(user.id, Number(amount), 'offers');
+      await this.editLevel(userId, Number(amount) * 0.05);
       return 200;
     } else {
       return new ForbiddenException('md5 codes dont match');
@@ -187,6 +190,8 @@ export class ApisService {
       },
     });
     await this.referralSystem(user.id, Number(reward), 'offers');
+    await this.editLevel(userId, Number(reward) * 0.05);
+
     return 200;
   }
 
@@ -229,6 +234,8 @@ export class ApisService {
         },
       });
       await this.referralSystem(user.id, Number(reward), 'offers');
+      await this.editLevel(user.id, Number(reward) * 0.05);
+
       return 'ok';
     } else {
       return new ForbiddenException('md5 codes dont match');
@@ -358,5 +365,35 @@ export class ApisService {
         console.log(`referral: ptcdaycount is ${reqUser.ptcDayCount}`);
       }
     }
+  }
+
+  async editLevel(userId: number, exp: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    const { level, curLevelExp } = user;
+    let newLevel = 0;
+    let newExp = 0;
+    if (level === 0 && curLevelExp >= 1000) {
+      newLevel = level + 1;
+    } else if (curLevelExp >= 1000 + 100 * (level - 1)) {
+      newLevel = level + 1;
+    } else {
+      newExp = curLevelExp + exp;
+      newLevel = level;
+    }
+
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        level: newLevel,
+        exp: { increment: exp },
+        expMonthCount: { increment: exp },
+        curLevelExp: newExp,
+      },
+    });
+    console.log('added exp', exp);
   }
 }

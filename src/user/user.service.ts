@@ -142,42 +142,13 @@ export class UserService {
     const { level, curLevelExp } = user;
     let newLevel = 0;
     let newExp = 0;
-    if (level === 1 && curLevelExp >= 100) {
+    if (level === 0 && curLevelExp >= 1000) {
       newLevel = level + 1;
-      newExp = 0;
-    } else if (level === 2 && curLevelExp >= 300) {
+    } else if (curLevelExp >= 1000 + 100 * level) {
       newLevel = level + 1;
-      newExp = 0;
-    } else if (level === 3 && curLevelExp >= 50) {
-      newLevel = level + 1;
-      newExp = 0;
-    } else if (level === 4 && curLevelExp >= 500) {
-      newLevel = level + 1;
-      newExp = 0;
-    } else if (level === 5 && curLevelExp >= 600) {
-      newLevel = level + 1;
-      newExp = 0;
-    } else if (level === 6 && curLevelExp >= 700) {
-      newLevel = level + 1;
-      newExp = 0;
-    } else if (level === 7 && curLevelExp >= 800) {
-      newLevel = level + 1;
-      newExp = 0;
-    } else if (level === 8 && curLevelExp >= 900) {
-      newLevel = level + 1;
-      newExp = 0;
-    } else if (level === 9 && curLevelExp >= 1000) {
-      newLevel = level + 1;
-      newExp = 0;
-    } else if (level === 10 && curLevelExp >= 1500) {
-      newLevel = level + 1;
-      newExp = 0;
-    } else if (level > 10 && curLevelExp >= 5000) {
-      newLevel = level + 1;
-      newExp = 0;
     } else {
-      newLevel = level;
       newExp = curLevelExp + dto.exp;
+      newLevel = level;
     }
 
     const newUser = await this.prisma.user.update({
@@ -194,15 +165,26 @@ export class UserService {
     delete newUser.password;
     return newUser;
   }
-  async reduceTokens(userId: number, tokens: number) {
-    return await this.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        investedTokens: { decrement: Number(tokens) },
-      },
-    });
+  async reduceTokens(userId: number, tokens: number, type: string) {
+    if (type === 'invest')
+      return await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          investedTokens: { decrement: Number(tokens) },
+        },
+      });
+    else {
+      return await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          curTokens: { decrement: Number(tokens) },
+        },
+      });
+    }
   }
 
   incrementTasksCount(userId: number, dto: { type: string }) {

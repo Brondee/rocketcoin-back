@@ -6,6 +6,7 @@ import {
   Body,
   Patch,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { PtcService } from './ptc.service';
 import { AddPtcDto } from './dto';
@@ -30,6 +31,11 @@ export class PtcController {
   @Post('add')
   addNewPtc(@Body() dto: AddPtcDto) {
     return this.ptcService.addNewPtc(dto);
+  }
+
+  @Delete('del/:id')
+  deletePtcById(@Param('id') id: number) {
+    return this.ptcService.deletePtcById(id);
   }
 
   @UseGuards(JwtGuard)
