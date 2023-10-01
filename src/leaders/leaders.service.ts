@@ -52,7 +52,7 @@ export class LeadersService {
     if (!leadersGeneral) {
       await this.prisma.leadersGeneral.create({
         data: {
-          tablesResetMonth: new Date().getMonth(),
+          tablesResetMonth: new Date().getDate(),
         },
       });
     }
@@ -60,13 +60,13 @@ export class LeadersService {
 
     if (
       !leadersGeneral ||
-      leadersGeneral?.tablesResetMonth !== new Date().getMonth()
+      leadersGeneral?.tablesResetMonth !== new Date().getDate()
     ) {
-      const ptcRewards = [3000, 2000, 1000];
-      const linksRewards = [4000, 3000, 2100];
-      const faucetRewards = [1500, 1000, 500];
-      const offerwallRewards = [4500, 3300, 1500];
-      const expRewards = [2500, 1700, 1200];
+      const ptcRewards = [60000, 30000, 15000];
+      const linksRewards = [100000, 50000, 25000];
+      const faucetRewards = [60000, 30000, 15000];
+      const offerwallRewards = [100000, 50000, 25000];
+      const expRewards = [15000, 10000, 5000];
 
       const ptcLeaders = await this.prisma.user.findMany({
         orderBy: {
@@ -168,7 +168,7 @@ export class LeadersService {
           id: leadersGeneral?.id,
         },
         data: {
-          tablesResetMonth: new Date().getMonth(),
+          tablesResetMonth: new Date().getDate(),
         },
       });
 

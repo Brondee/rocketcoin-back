@@ -54,7 +54,7 @@ export class ApisService {
         return new ForbiddenException('signatures dont match');
       }
     }
-    await this.editLevel(userId, Number(amountLocal) * 0.05);
+    await this.editLevel(user.id, Number(amountLocal) * 0.05);
     console.log({ userId, amountLocal, status, transId });
     return user;
   }
@@ -104,7 +104,7 @@ export class ApisService {
         },
       });
       await this.referralSystem(user.id, Number(reward), 'offers');
-      await this.editLevel(userId, Number(reward) * 0.05);
+      await this.editLevel(user.id, Number(reward) * 0.05);
     } else {
       return new ForbiddenException('md5 codes dont match');
     }
@@ -151,7 +151,7 @@ export class ApisService {
         },
       });
       await this.referralSystem(user.id, Number(amount), 'offers');
-      await this.editLevel(userId, Number(amount) * 0.05);
+      await this.editLevel(user.id, Number(amount) * 0.05);
       return 200;
     } else {
       return new ForbiddenException('md5 codes dont match');
@@ -190,7 +190,7 @@ export class ApisService {
       },
     });
     await this.referralSystem(user.id, Number(reward), 'offers');
-    await this.editLevel(userId, Number(reward) * 0.05);
+    await this.editLevel(user.id, Number(reward) * 0.05);
 
     return 200;
   }

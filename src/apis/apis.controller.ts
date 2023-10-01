@@ -72,6 +72,14 @@ export class ApisController {
     return this.apisService.parseOfferscryptoGet(userId, reward);
   }
 
+  @Get('theorem')
+  parseTheoremRequest(
+    @Query('user_id') userId: number,
+    @Query('reward') reward: number,
+  ) {
+    return this.apisService.parseOfferscryptoGet(userId, reward);
+  }
+
   @Post('links')
   parseLinksRequest(@Body() dto: LinksDto) {
     return this.apisService.parseLinksRequest(dto);
