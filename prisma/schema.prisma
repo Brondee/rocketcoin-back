@@ -21,6 +21,7 @@ model User {
   password String
  
   registrationIp String @default("")
+  lastWithdraw String @default("")
 
   exp Float @default(0)
   curLevelExp Float @default(0)

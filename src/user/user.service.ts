@@ -229,6 +229,7 @@ export class UserService {
     const userFind = await this.prisma.user.findUnique({
       where: {
         id: Number(userId),
+        lastWithdraw: new Date().toLocaleDateString("en-US"),
       },
     });
     if (userFind) {
